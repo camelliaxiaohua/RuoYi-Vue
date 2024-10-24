@@ -20,8 +20,8 @@ import com.ruoyi.framework.manager.factory.AsyncFactory;
 import com.ruoyi.framework.web.service.TokenService;
 
 /**
- * 自定义退出处理类 返回成功
- * 
+ * 自定义退出处理类，用于在用户成功登出后返回成功消息
+ *
  * @author ruoyi
  */
 @Configuration
@@ -31,14 +31,20 @@ public class LogoutSuccessHandlerImpl implements LogoutSuccessHandler
     private TokenService tokenService;
 
     /**
-     * 退出处理
-     * 
-     * @return
+     * 在用户成功登出时调用的方法
+     * 清除用户的登录信息，并记录登出日志
+     *
+     * @param request 登出请求对象
+     * @param response 登出响应对象，用于向客户端返回结果
+     * @param authentication 用户认证信息
+     * @throws IOException 如果在向响应中写入数据时发生I/O错误
+     * @throws ServletException 如果在处理请求时发生Servlet异常
      */
     @Override
     public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
             throws IOException, ServletException
     {
+        // 获取登录用户信息
         LoginUser loginUser = tokenService.getLoginUser(request);
         if (StringUtils.isNotNull(loginUser))
         {
@@ -48,6 +54,7 @@ public class LogoutSuccessHandlerImpl implements LogoutSuccessHandler
             // 记录用户退出日志
             AsyncManager.me().execute(AsyncFactory.recordLogininfor(userName, Constants.LOGOUT, MessageUtils.message("user.logout.success")));
         }
+        // 向客户端返回成功登出的消息
         ServletUtils.renderString(response, JSON.toJSONString(AjaxResult.success(MessageUtils.message("user.logout.success"))));
     }
 }

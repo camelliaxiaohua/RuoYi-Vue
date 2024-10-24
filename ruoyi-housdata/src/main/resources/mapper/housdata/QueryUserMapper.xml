@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.housdata.mapper.QueryUserMapper">
+    
+    <resultMap type="QueryUser" id="QueryUserResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="age"    column="age"    />
+        <result property="birthday"    column="birthday"    />
+        <result property="sex"    column="sex"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="identityId"    column="identity_id"    />
+    </resultMap>
+
+    <sql id="selectQueryUserVo">
+        select id, name, age, birthday, sex, create_by, create_time, update_by, update_time, remark, identity_id from query_user
+    </sql>
+
+    <select id="selectQueryUserList" parameterType="QueryUser" resultMap="QueryUserResult">
+        <include refid="selectQueryUserVo"/>
+        <where>  
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="age != null "> and age = #{age}</if>
+            <if test="birthday != null "> and birthday = #{birthday}</if>
+            <if test="sex != null  and sex != ''"> and sex = #{sex}</if>
+        </where>
+    </select>
+    
+    <select id="selectQueryUserById" parameterType="Long" resultMap="QueryUserResult">
+        <include refid="selectQueryUserVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertQueryUser" parameterType="QueryUser" useGeneratedKeys="true" keyProperty="id">
+        insert into query_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null">name,</if>
+            <if test="age != null">age,</if>
+            <if test="birthday != null">birthday,</if>
+            <if test="sex != null">sex,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+            <if test="identityId != null">identity_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null">#{name},</if>
+            <if test="age != null">#{age},</if>
+            <if test="birthday != null">#{birthday},</if>
+            <if test="sex != null">#{sex},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="identityId != null">#{identityId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateQueryUser" parameterType="QueryUser">
+        update query_user
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null">name = #{name},</if>
+            <if test="age != null">age = #{age},</if>
+            <if test="birthday != null">birthday = #{birthday},</if>
+            <if test="sex != null">sex = #{sex},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="identityId != null">identity_id = #{identityId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteQueryUserById" parameterType="Long">
+        delete from query_user where id = #{id}
+    </delete>
+
+    <delete id="deleteQueryUserByIds" parameterType="String">
+        delete from query_user where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectUsersWithIdentity" parameterType="Long" resultType="QueryUser">
+        SELECT u.*, i.identity_name, i.identity_type
+        FROM query_user u
+        JOIN housdata_identity i ON u.id = i.identity_id
+        WHERE u.id = #{id}  <!-- 这里确保用的是用户的 id -->
+    </select>
+
+</mapper>

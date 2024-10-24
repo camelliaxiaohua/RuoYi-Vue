@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.housdata.mapper.HousdataIdentityMapper">
+
+    <resultMap type="HousdataIdentity" id="HousdataIdentityResult">
+        <result property="identityId"    column="identity_id"    />
+        <result property="id"    column="id"    />
+        <result property="identityName"    column="identity_name"    />
+        <result property="identityType"    column="identity_type"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectHousdataIdentityVo">
+        select identity_id, id, identity_name, identity_type, create_by, create_time, update_by, update_time, remark from housdata_identity
+    </sql>
+
+    <select id="selectHousdataIdentityList" parameterType="HousdataIdentity" resultMap="HousdataIdentityResult">
+        <include refid="selectHousdataIdentityVo"/>
+        <where>
+            <if test="identityId != null "> and identity_id = #{identityId}</if>
+            <if test="identityName != null  and identityName != ''"> and identity_name like concat('%', #{identityName}, '%')</if>
+            <if test="identityType != null  and identityType != ''"> and identity_type = #{identityType}</if>
+        </where>
+    </select>
+
+    <select id="selectHousdataIdentityById" parameterType="Long" resultMap="HousdataIdentityResult">
+        <include refid="selectHousdataIdentityVo"/>
+        where id = #{Id}
+    </select>
+
+    <insert id="insertHousdataIdentity" parameterType="HousdataIdentity" useGeneratedKeys="true" keyProperty="identityId">
+        insert into housdata_identity
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="identityId != null">identity_id,</if>
+            <if test="id != null">id,</if>
+            <if test="identityName != null">identity_name,</if>
+            <if test="identityType != null">identity_type,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="identityId != null">#{identityId},</if>
+            <if test="id != null">#{id},</if>
+            <if test="identityName != null">#{identityName},</if>
+            <if test="identityType != null">#{identityType},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+        </trim>
+    </insert>
+
+
+    <update id="updateHousdataIdentity" parameterType="HousdataIdentity">
+        update housdata_identity
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="identityName != null">identity_name = #{identityName},</if>
+            <if test="identityType != null">identity_type = #{identityType},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+
+
+    <delete id="deleteHousdataIdentityByIdentityId" parameterType="Long">
+        delete from housdata_identity where identity_id = #{identityId}
+    </delete>
+
+    <delete id="deleteHousdataIdentityByIds" parameterType="String">
+        DELETE FROM housdata_identity WHERE id IN
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

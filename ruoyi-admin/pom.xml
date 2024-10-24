@@ -85,6 +85,10 @@
             <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.ruoyi</groupId>
+            <artifactId>ruoyi-housdata</artifactId>
+        </dependency>
 
     </dependencies>
 

@@ -215,8 +215,17 @@ public class ExcelUtil<T>
         this.excludeFields = fields;
     }
 
+    /**
+     * 初始化Excel生成器的方法
+     *
+     * @param list       要写入Excel的列表数据，可以是任何类型的数据
+     * @param sheetName  Excel工作表的名称
+     * @param title      Excel表格的标题
+     * @param type       数据的类型，用于确定工作表的格式或样式
+     */
     public void init(List<T> list, String sheetName, String title, Type type)
     {
+        // 检查传入的列表是否为null，如果是，则创建一个新的空列表
         if (list == null)
         {
             list = new ArrayList<T>();
@@ -225,9 +234,17 @@ public class ExcelUtil<T>
         this.sheetName = sheetName;
         this.type = type;
         this.title = title;
+
+        // 创建Excel字段，根据type类型初始化必要的字段信息
         createExcelField();
+
+        // 创建Workbook对象，即创建Excel工作簿
         createWorkbook();
+
+        // 创建标题，设置Excel表格的标题行
         createTitle();
+
+        // 创建副标题，可能包括列表的表头或其他辅助信息
         createSubHead();
     }
 
@@ -236,49 +253,85 @@ public class ExcelUtil<T>
      */
     public void createTitle()
     {
+        // 检查标题是否为空
         if (StringUtils.isNotEmpty(title))
         {
+            // 如果不是空标题，则增加合并行的计数
             subMergedFirstRowNum++;
             subMergedLastRowNum++;
+
+            // 计算标题行的最后一列索引
             int titleLastCol = this.fields.size() - 1;
+
+            // 如果存在子列表，则调整标题行的最后一列索引
             if (isSubList())
             {
                 titleLastCol = titleLastCol + subFields.size() - 1;
             }
+
+            // 创建标题行，并设置行高
             Row titleRow = sheet.createRow(rownum == 0 ? rownum++ : 0);
             titleRow.setHeightInPoints(30);
+
+            // 创建标题单元格，并设置样式和内容
             Cell titleCell = titleRow.createCell(0);
             titleCell.setCellStyle(styles.get("title"));
             titleCell.setCellValue(title);
+
+            // 合并标题行的单元格区域
             sheet.addMergedRegion(new CellRangeAddress(titleRow.getRowNum(), titleRow.getRowNum(), titleRow.getRowNum(), titleLastCol));
         }
     }
 
+
     /**
      * 创建对象的子列表名称
+     * 当存在子列表时，此方法用于创建子列表的表头
+     * 它通过增加行号来管理子列表的合并，并为每个字段创建单元格
      */
     public void createSubHead()
     {
+        // 检查是否存在子列表
         if (isSubList())
         {
+            // 更新子列表合并的行号
             subMergedFirstRowNum++;
             subMergedLastRowNum++;
+
+            // 创建新的行
             Row subRow = sheet.createRow(rownum);
+
+            // 初始化Excel列号
             int excelNum = 0;
+
+            // 遍历字段数组，为每个字段创建表头单元格
             for (Object[] objects : fields)
             {
+                // 获取字段的Excel注解信息
                 Excel attr = (Excel) objects[1];
+
+                // 创建表头单元格并设置内容
                 Cell headCell1 = subRow.createCell(excelNum);
                 headCell1.setCellValue(attr.name());
+
+                // 设置单元格样式
                 headCell1.setCellStyle(styles.get(StringUtils.format("header_{}_{}", attr.headerColor(), attr.headerBackgroundColor())));
+
+                // 增加Excel列号
                 excelNum++;
             }
+
+            // 计算表头合并区域的起始和结束列号
             int headFirstRow = excelNum - 1;
             int headLastRow = headFirstRow + subFields.size() - 1;
+
+            // 如果合并区域的结束列号大于起始列号，则合并单元格
             if (headLastRow > headFirstRow)
             {
                 sheet.addMergedRegion(new CellRangeAddress(rownum, rownum, headFirstRow, headLastRow));
             }
+
+            // 增加行号，准备下一行的操作
             rownum++;
         }
     }
@@ -308,6 +361,7 @@ public class ExcelUtil<T>
         return list;
     }
 
+    
     /**
      * 对excel表单默认第一个索引名转换成list
      * 
@@ -1398,7 +1452,8 @@ public class ExcelUtil<T>
      */
     public String encodingFilename(String filename)
     {
-        filename = UUID.randomUUID() + "_" + filename + ".xlsx";
+        //filename = UUID.randomUUID() + "_" + filename + ".xlsx";
+        filename = "住房保障局"+"_"+new Date()+".xlsx";
         return filename;
     }
 

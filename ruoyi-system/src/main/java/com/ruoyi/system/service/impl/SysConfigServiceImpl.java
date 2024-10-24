@@ -174,6 +174,7 @@ public class SysConfigServiceImpl implements ISysConfigService
     @Override
     public void loadingConfigCache()
     {
+        // 从数据库加载数据，添加至Redis缓存。
         List<SysConfig> configsList = configMapper.selectConfigList(new SysConfig());
         for (SysConfig config : configsList)
         {
@@ -187,6 +188,7 @@ public class SysConfigServiceImpl implements ISysConfigService
     @Override
     public void clearConfigCache()
     {
+        // 获取所有sys_config:开头的缓存键，然后清除。
         Collection<String> keys = redisCache.keys(CacheConstants.SYS_CONFIG_KEY + "*");
         redisCache.deleteObject(keys);
     }
@@ -197,7 +199,9 @@ public class SysConfigServiceImpl implements ISysConfigService
     @Override
     public void resetConfigCache()
     {
+        // 清除Redis中的缓存
         clearConfigCache();
+        // 从数据库加载数据，添加至Redis缓存。
         loadingConfigCache();
     }
 
@@ -220,7 +224,7 @@ public class SysConfigServiceImpl implements ISysConfigService
     }
 
     /**
-     * 设置cache key
+     * 设置Redis缓存键 cache key
      * 
      * @param configKey 参数键
      * @return 缓存键key

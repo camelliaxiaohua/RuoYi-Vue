@@ -35,7 +35,7 @@ public class SysConfigController extends BaseController
     private ISysConfigService configService;
 
     /**
-     * 获取参数配置列表
+     * 获取参数配置列表，数据库sys_config。
      */
     @PreAuthorize("@ss.hasPermi('system:config:list')")
     @GetMapping("/list")
@@ -46,21 +46,30 @@ public class SysConfigController extends BaseController
         return getDataTable(list);
     }
 
+
+    /**
+     * 导出参数配置列表，
+     * @param response
+     * @param config
+     */
     @Log(title = "参数管理", businessType = BusinessType.EXPORT)
     @PreAuthorize("@ss.hasPermi('system:config:export')")
     @PostMapping("/export")
     public void export(HttpServletResponse response, SysConfig config)
     {
+        // 从数据库获取配置列表，然后下载。
         List<SysConfig> list = configService.selectConfigList(config);
         ExcelUtil<SysConfig> util = new ExcelUtil<SysConfig>(SysConfig.class);
         util.exportExcel(response, list, "参数数据");
     }
 
+
     /**
-     * 根据参数编号获取详细信息
+     * 根据参数编号获取详细信息，功能未实现。
      */
     @PreAuthorize("@ss.hasPermi('system:config:query')")
     @GetMapping(value = "/{configId}")
+    @Deprecated
     public AjaxResult getInfo(@PathVariable Long configId)
     {
         return success(configService.selectConfigById(configId));
@@ -70,13 +79,14 @@ public class SysConfigController extends BaseController
      * 根据参数键名查询参数值
      */
     @GetMapping(value = "/configKey/{configKey}")
+    @Deprecated
     public AjaxResult getConfigKey(@PathVariable String configKey)
     {
         return success(configService.selectConfigByKey(configKey));
     }
 
     /**
-     * 新增参数配置
+     * 参数设置，新增参数配置。
      */
     @PreAuthorize("@ss.hasPermi('system:config:add')")
     @Log(title = "参数管理", businessType = BusinessType.INSERT)

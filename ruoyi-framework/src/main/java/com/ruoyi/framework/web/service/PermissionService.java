@@ -99,6 +99,7 @@ public class PermissionService
         for (SysRole sysRole : loginUser.getUser().getRoles())
         {
             String roleKey = sysRole.getRoleKey();
+            // 判断是否拥有管理员权限，
             if (Constants.SUPER_ADMIN.equals(roleKey) || roleKey.equals(StringUtils.trim(role)))
             {
                 return true;
@@ -146,7 +147,7 @@ public class PermissionService
     }
 
     /**
-     * 判断是否包含权限
+     * 判断是否包含所有权限，或者判断是否拥有请求资源的权限。
      * 
      * @param permissions 权限列表
      * @param permission 权限字符串
